@@ -1,0 +1,97 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-primary: #0A0A0A;
+    --bg-secondary: #121212;
+    --bg-card: #161616;
+    --text-primary: #FFFFFF;
+    --text-muted: #A3A3A3;
+    --text-dim: #737373;
+    --border-color: #262626;
+    --border-light: #383838;
+  }
+
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: #0A0A0A;
+    color: #F5F5F5;
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* High-Contrast Classic Serif Display as in Canva Minimal Dark Template */
+  h1, h2, h3, .font-serif-display {
+    font-family: 'Playfair Display', 'Bodoni Moda', Georgia, serif;
+    letter-spacing: -0.02em;
+  }
+
+  .font-editorial-italic {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-style: italic;
+  }
+
+  code, pre, .font-mono {
+    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  }
+}
+
+/* Minimal dark scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0A0A0A;
+}
+::-webkit-scrollbar-thumb {
+  background: #262626;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #404040;
+}
+
+/* Signature Architectural Arch Shape from the Canva Template */
+.arch-card {
+  border-top-left-radius: 140px;
+  border-top-right-radius: 140px;
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
+}
+
+.arch-card-sm {
+  border-top-left-radius: 90px;
+  border-top-right-radius: 90px;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+
+.arch-hero-portrait {
+  border-top-left-radius: 180px;
+  border-top-right-radius: 180px;
+  border-bottom-left-radius: 24px;
+  border-bottom-right-radius: 24px;
+}
+
+/* Rotating "Work with me today" circular sticker badge */
+@keyframes spinSlow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spinSlow 18s linear infinite;
+}
+
+/* Subtle minimal film noise */
+.bg-minimal-dark {
+  background-color: #0A0A0A;
+  background-image: radial-gradient(circle at 50% 0%, #171717 0%, #0A0A0A 60%);
+}
