@@ -1,10 +1,12 @@
-import { Terminal, Code, Cpu, Sparkles, ArrowUpRight, Globe } from 'lucide-react';
+import { Code, Cpu, Globe, Edit2 } from 'lucide-react';
 import { motion } from 'motion/react';
-import { PERSONAL_INFO, LANGUAGES } from '../data/portfolioData';
+import { usePortfolio } from '../context/PortfolioContext';
 
 export function About() {
+  const { personalInfo, isAuthenticated, isEditModeActive, openCMS } = usePortfolio();
+
   return (
-    <section id="about" className="py-20 lg:py-28 relative bg-[#0A0A0A] border-t border-[#1C1C1C]">
+    <section id="about" className="py-20 lg:py-28 relative bg-[var(--bg-primary,#0A0A0A)] border-t border-[#1C1C1C] transition-colors duration-300">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           
@@ -14,24 +16,34 @@ export function About() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="lg:col-span-7 space-y-6"
+            className="lg:col-span-7 space-y-6 relative"
           >
+            {/* Admin Quick Edit Button */}
+            {isAuthenticated && isEditModeActive && (
+              <button
+                type="button"
+                onClick={() => openCMS('content')}
+                className="absolute -top-7 left-0 z-30 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-mono text-emerald-300 bg-emerald-950/80 border border-emerald-700/60 shadow hover:bg-emerald-900 transition-colors"
+              >
+                <Edit2 className="w-3 h-3" />
+                <span>Edit Bio Narrative</span>
+              </button>
+            )}
+
             <h2 className="font-serif-display text-4xl sm:text-5xl lg:text-6xl font-normal tracking-tight text-white leading-tight">
-              Who is Sameer?
+              Who is {personalInfo.name}?
             </h2>
 
-            <div className="space-y-4 text-base sm:text-lg text-[#A3A3A3] font-light leading-relaxed">
-              <p>
-                I'm a full stack developer and AI builder with a focus on creating practical, high-performance software. Today, I build autonomous agentic workflows, responsive web applications, and automated systems that solve real-world problems.
-              </p>
-              <p className="text-sm sm:text-base text-[#888888]">
-                My technical interests span Agentic AI frameworks (LangGraph, autonomous tool execution), modern full-stack development (React, TypeScript, Python, FastAPI), and API-driven automation.
-              </p>
+            <div className="space-y-4 text-base sm:text-lg text-[#A3A3A3] font-light leading-relaxed whitespace-pre-line">
+              <p>{personalInfo.aboutDescription}</p>
+              {personalInfo.aboutSubDescription && (
+                <p className="text-sm sm:text-base text-[#888888]">{personalInfo.aboutSubDescription}</p>
+              )}
             </div>
 
             {/* Core Capability Badges */}
             <div className="pt-2 grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div className="p-4 rounded-xl bg-[#121212] border border-[#242424] flex items-center gap-3">
+              <div className="p-4 rounded-xl bg-[var(--bg-card,#161616)] border border-[#242424] flex items-center gap-3">
                 <Cpu className="w-5 h-5 text-neutral-300" />
                 <div>
                   <div className="text-xs uppercase tracking-wider text-white font-medium">Agentic AI & LLMs</div>
@@ -39,7 +51,7 @@ export function About() {
                 </div>
               </div>
 
-              <div className="p-4 rounded-xl bg-[#121212] border border-[#242424] flex items-center gap-3">
+              <div className="p-4 rounded-xl bg-[var(--bg-card,#161616)] border border-[#242424] flex items-center gap-3">
                 <Code className="w-5 h-5 text-neutral-300" />
                 <div>
                   <div className="text-xs uppercase tracking-wider text-white font-medium">Full Stack Web</div>
@@ -52,7 +64,7 @@ export function About() {
             <div className="pt-4 flex items-center gap-6 text-xs text-[#888888] font-mono">
               <div className="flex items-center gap-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-neutral-400" />
-                <span>Karachi, Pakistan</span>
+                <span>{personalInfo.location || 'Karachi, Pakistan'}</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <Globe className="w-3.5 h-3.5" />
@@ -61,7 +73,7 @@ export function About() {
             </div>
           </motion.div>
 
-          {/* Right Column: Architectural Arch Graphic (matching Canva right arch frame) */}
+          {/* Right Column: Architectural Arch Graphic */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
@@ -92,7 +104,7 @@ export function About() {
                   <span className="text-white">class</span> Developer:
                 </p>
                 <p className="pl-3 text-neutral-300">
-                  name = <span className="text-neutral-100">"Sameer"</span>
+                  name = <span className="text-neutral-100">"{personalInfo.name}"</span>
                 </p>
                 <p className="pl-3 text-neutral-300">
                   focus = [<span className="text-neutral-100">"Agentic AI"</span>, <span className="text-neutral-100">"Full Stack"</span>]
@@ -105,7 +117,7 @@ export function About() {
               {/* Arch Bottom Tag */}
               <div className="relative z-10 pb-4 text-center">
                 <p className="font-serif-display italic text-sm text-neutral-400">
-                  "Turning Ideas Into Intelligent Solutions."
+                  "{personalInfo.tagline || 'Turning Ideas Into Intelligent Solutions.'}"
                 </p>
               </div>
             </div>

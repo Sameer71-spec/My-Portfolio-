@@ -1,9 +1,11 @@
 import { useState, type FormEvent } from 'react';
-import { Mail, Phone, MapPin, Copy, Check, ArrowUpRight, Send, Github } from 'lucide-react';
+import { Mail, Phone, MapPin, Copy, Check, ArrowUpRight, Send, Github, Edit2 } from 'lucide-react';
 import { motion } from 'motion/react';
-import { PERSONAL_INFO } from '../data/portfolioData';
+import { usePortfolio } from '../context/PortfolioContext';
 
 export function Contact() {
+  const { personalInfo, isAuthenticated, isEditModeActive, openCMS } = usePortfolio();
+
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
@@ -19,24 +21,38 @@ export function Contact() {
 
   const handleSendMail = (e: FormEvent) => {
     e.preventDefault();
-    const mailtoUrl = `mailto:${PERSONAL_INFO.email}?subject=${encodeURIComponent(
+    const mailtoUrl = `mailto:${personalInfo.email}?subject=${encodeURIComponent(
       subject || 'Collaboration inquiry with Sameer'
     )}&body=${encodeURIComponent(message)}`;
     window.location.href = mailtoUrl;
   };
 
   return (
-    <section id="contact" className="py-20 lg:py-32 relative bg-[#0A0A0A] border-t border-[#1C1C1C]">
+    <section
+      id="contact"
+      className="py-20 lg:py-32 relative bg-[var(--bg-primary,#0A0A0A)] border-t border-[#1C1C1C] transition-colors duration-300"
+    >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Section Heading - Matching Canva "Reach Out to Me" */}
+        {/* Section Heading */}
         <motion.div
           initial={{ opacity: 0, y: 25 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center max-w-2xl mx-auto mb-16 space-y-4"
+          className="text-center max-w-2xl mx-auto mb-16 space-y-4 relative"
         >
+          {isAuthenticated && isEditModeActive && (
+            <button
+              type="button"
+              onClick={() => openCMS('content')}
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-mono text-emerald-300 bg-emerald-950/80 border border-emerald-700/60 shadow hover:bg-emerald-900 transition-colors mb-2"
+            >
+              <Edit2 className="w-3 h-3" />
+              <span>Edit Contact Info</span>
+            </button>
+          )}
+
           <h2 className="font-serif-display text-4xl sm:text-5xl lg:text-6xl font-normal tracking-tight text-white">
             Reach Out to Me
           </h2>
@@ -45,7 +61,7 @@ export function Contact() {
           </p>
         </motion.div>
 
-        {/* 3 Columns for Address, Email, Phone (Matching Canva template layout exactly) */}
+        {/* 3 Columns for Address, Email, Phone */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16 text-center">
           
           {/* 1. Address Column */}
@@ -54,7 +70,7 @@ export function Contact() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="p-8 rounded-2xl bg-[#121212] border border-[#222222] flex flex-col items-center justify-center space-y-3"
+            className="p-8 rounded-2xl bg-[var(--bg-card,#121212)] border border-[#222222] flex flex-col items-center justify-center space-y-3 shadow-xl"
           >
             <div className="p-3 rounded-full bg-[#1A1A1A] border border-[#2C2C2C] text-white mb-1">
               <MapPin className="w-5 h-5" />
@@ -63,7 +79,7 @@ export function Contact() {
               Address
             </div>
             <div className="text-sm text-[#888888] font-light">
-              {PERSONAL_INFO.location}
+              {personalInfo.location || 'Karachi, Pakistan'}
             </div>
             <span className="text-[11px] font-mono text-[#666666]">
               Timezone: GMT+5 (PKT)
@@ -76,7 +92,7 @@ export function Contact() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="p-8 rounded-2xl bg-[#121212] border border-[#222222] flex flex-col items-center justify-center space-y-3 group"
+            className="p-8 rounded-2xl bg-[var(--bg-card,#121212)] border border-[#222222] flex flex-col items-center justify-center space-y-3 group shadow-xl"
           >
             <div className="p-3 rounded-full bg-[#1A1A1A] border border-[#2C2C2C] text-white mb-1">
               <Mail className="w-5 h-5" />
@@ -85,14 +101,14 @@ export function Contact() {
               Email
             </div>
             <a
-              href={PERSONAL_INFO.emailMailto}
+              href={personalInfo.emailMailto || `mailto:${personalInfo.email}`}
               className="text-sm text-[#888888] hover:text-white transition-colors break-all"
             >
-              {PERSONAL_INFO.email}
+              {personalInfo.email}
             </a>
             <button
               type="button"
-              onClick={() => copyToClipboard(PERSONAL_INFO.email, 'email')}
+              onClick={() => copyToClipboard(personalInfo.email, 'email')}
               className="inline-flex items-center gap-1 text-xs text-neutral-400 hover:text-white transition-colors"
             >
               {copiedField === 'email' ? (
@@ -115,7 +131,7 @@ export function Contact() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.3 }}
-            className="p-8 rounded-2xl bg-[#121212] border border-[#222222] flex flex-col items-center justify-center space-y-3"
+            className="p-8 rounded-2xl bg-[var(--bg-card,#121212)] border border-[#222222] flex flex-col items-center justify-center space-y-3 shadow-xl"
           >
             <div className="p-3 rounded-full bg-[#1A1A1A] border border-[#2C2C2C] text-white mb-1">
               <Phone className="w-5 h-5" />
@@ -124,14 +140,14 @@ export function Contact() {
               Phone
             </div>
             <a
-              href={PERSONAL_INFO.phoneTel}
+              href={personalInfo.phoneTel || `tel:${personalInfo.phone}`}
               className="text-sm text-[#888888] hover:text-white transition-colors"
             >
-              {PERSONAL_INFO.phoneFormatted}
+              {personalInfo.phoneFormatted || personalInfo.phone}
             </a>
             <button
               type="button"
-              onClick={() => copyToClipboard(PERSONAL_INFO.phone, 'phone')}
+              onClick={() => copyToClipboard(personalInfo.phone, 'phone')}
               className="inline-flex items-center gap-1 text-xs text-neutral-400 hover:text-white transition-colors"
             >
               {copiedField === 'phone' ? (
@@ -150,7 +166,7 @@ export function Contact() {
 
         </div>
 
-        {/* Center Pill Button - "Let's collaborate ↗" (Matching Canva template) */}
+        {/* Center Pill Button - "Let's collaborate ↗" */}
         <div className="flex flex-col items-center justify-center space-y-6">
           <div className="flex items-center gap-4 flex-wrap justify-center">
             <button
@@ -164,13 +180,13 @@ export function Contact() {
             </button>
 
             <a
-              href={PERSONAL_INFO.githubUrl}
+              href={personalInfo.githubUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full text-xs uppercase tracking-wider font-semibold text-white bg-[#141414] hover:bg-[#202020] border border-[#2E2E2E] transition-all"
             >
               <Github className="w-4 h-4" />
-              <span>GitHub / {PERSONAL_INFO.githubUsername}</span>
+              <span>GitHub / {personalInfo.githubUsername || personalInfo.name}</span>
             </a>
           </div>
 
@@ -184,7 +200,7 @@ export function Contact() {
             >
               <form onSubmit={handleSendMail} className="space-y-4 text-left">
                 <h3 className="font-serif-display text-lg text-white font-normal text-center mb-4">
-                  Send Direct Message
+                  Send Direct Message to {personalInfo.name}
                 </h3>
 
                 <div>

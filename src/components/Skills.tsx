@@ -6,10 +6,10 @@ import {
   Database,
   Cpu,
   Sparkles,
-  Terminal,
+  Edit2,
 } from 'lucide-react';
 import { motion } from 'motion/react';
-import { SKILL_CATEGORIES } from '../data/portfolioData';
+import { usePortfolio } from '../context/PortfolioContext';
 
 function getCategoryIcon(name: string) {
   switch (name) {
@@ -31,8 +31,13 @@ function getCategoryIcon(name: string) {
 }
 
 export function Skills() {
+  const { skillCategories, isAuthenticated, isEditModeActive, openCMS } = usePortfolio();
+
   return (
-    <section id="skills" className="py-20 lg:py-28 relative bg-[#0A0A0A] border-t border-[#1C1C1C]">
+    <section
+      id="skills"
+      className="py-20 lg:py-28 relative bg-[var(--bg-primary,#0A0A0A)] border-t border-[#1C1C1C] transition-colors duration-300"
+    >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <motion.div
@@ -40,8 +45,19 @@ export function Skills() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center max-w-2xl mx-auto mb-16 space-y-3"
+          className="text-center max-w-2xl mx-auto mb-16 space-y-3 relative"
         >
+          {isAuthenticated && isEditModeActive && (
+            <button
+              type="button"
+              onClick={() => openCMS('skills')}
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-mono text-emerald-300 bg-emerald-950/80 border border-emerald-700/60 shadow hover:bg-emerald-900 transition-colors mb-2"
+            >
+              <Edit2 className="w-3 h-3" />
+              <span>Edit Tech Stack</span>
+            </button>
+          )}
+
           <h2 className="font-serif-display text-4xl sm:text-5xl lg:text-6xl font-normal tracking-tight text-white">
             Technical Stack
           </h2>
@@ -52,14 +68,14 @@ export function Skills() {
 
         {/* Categories Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {SKILL_CATEGORIES.map((cat, idx) => (
+          {skillCategories.map((cat, idx) => (
             <motion.div
               key={cat.title}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: idx * 0.05, duration: 0.4 }}
-              className="p-6 rounded-2xl bg-[#121212] border border-[#222222] hover:border-neutral-500 transition-colors shadow-lg"
+              className="p-6 rounded-2xl bg-[var(--bg-card,#121212)] border border-[#222222] hover:border-neutral-500 transition-colors shadow-lg"
             >
               <div className="flex items-center gap-3 pb-3 mb-4 border-b border-[#1E1E1E]">
                 <div className="p-2 rounded-xl bg-[#1A1A1A] border border-[#2A2A2A]">

@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
+import { usePortfolio } from '../context/PortfolioContext';
 
 interface TrailParticle {
   x: number;
@@ -9,6 +10,7 @@ interface TrailParticle {
 }
 
 export function CustomCursor() {
+  const { animationSettings } = usePortfolio();
   const [isHovered, setIsHovered] = useState(false);
   const [isClicking, setIsClicking] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
@@ -24,6 +26,8 @@ export function CustomCursor() {
   const animFrameId = useRef<number | null>(null);
 
   useEffect(() => {
+    if (!animationSettings.cursorFollower) return;
+
     const checkTouch = () => {
       const touch =
         'ontouchstart' in window ||
@@ -165,9 +169,9 @@ export function CustomCursor() {
         cancelAnimationFrame(animFrameId.current);
       }
     };
-  }, [isTouch, isVisible]);
+  }, [isTouch, isVisible, animationSettings.cursorFollower]);
 
-  if (isTouch) return null;
+  if (!animationSettings.cursorFollower || isTouch) return null;
 
   return (
     <>

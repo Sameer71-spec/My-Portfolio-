@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Github, Star, ExternalLink, Clock } from 'lucide-react';
+import { Github, ExternalLink } from 'lucide-react';
 import { motion } from 'motion/react';
-import { PERSONAL_INFO } from '../data/portfolioData';
+import { usePortfolio } from '../context/PortfolioContext';
 import { GitHubRepo } from '../types';
 
 const FALLBACK_REPOS: GitHubRepo[] = [
@@ -68,32 +68,35 @@ const FALLBACK_REPOS: GitHubRepo[] = [
 ];
 
 export function GitHubActivity() {
+  const { personalInfo } = usePortfolio();
   const [repos, setRepos] = useState<GitHubRepo[]>(FALLBACK_REPOS);
-  const [isLive, setIsLive] = useState(false);
 
   useEffect(() => {
     async function fetchRepos() {
+      const username = personalInfo.githubUsername || 'Sameer71-spec';
       try {
         const res = await fetch(
-          `https://api.github.com/users/${PERSONAL_INFO.githubUsername}/repos?sort=updated&per_page=6`
+          `https://api.github.com/users/${username}/repos?sort=updated&per_page=6`
         );
         if (res.ok) {
           const data = await res.json();
           if (Array.isArray(data) && data.length > 0) {
             setRepos(data);
-            setIsLive(true);
           }
         }
       } catch {
-        setIsLive(false);
+        // Fallback to static repos list
       }
     }
 
     fetchRepos();
-  }, []);
+  }, [personalInfo.githubUsername]);
 
   return (
-    <section id="github" className="py-20 lg:py-28 relative bg-[#0A0A0A] border-t border-[#1C1C1C]">
+    <section
+      id="github"
+      className="py-20 lg:py-28 relative bg-[var(--bg-primary,#0A0A0A)] border-t border-[#1C1C1C] transition-colors duration-300"
+    >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
@@ -104,18 +107,18 @@ export function GitHubActivity() {
             <p className="text-sm text-[#888888] font-light">
               Verified source code and experiments hosted on{' '}
               <a
-                href={PERSONAL_INFO.githubUrl}
+                href={personalInfo.githubUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-white hover:underline font-mono"
               >
-                github.com/{PERSONAL_INFO.githubUsername}
+                github.com/{personalInfo.githubUsername}
               </a>
             </p>
           </div>
 
           <a
-            href={PERSONAL_INFO.githubUrl}
+            href={personalInfo.githubUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs uppercase tracking-wider font-semibold text-black bg-white hover:bg-neutral-200 transition-all shadow-md self-start md:self-auto"
@@ -134,7 +137,7 @@ export function GitHubActivity() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: idx * 0.05, duration: 0.4 }}
-              className="rounded-2xl p-6 bg-[#121212] border border-[#222222] hover:border-neutral-500 transition-all flex flex-col justify-between group shadow-lg"
+              className="rounded-2xl p-6 bg-[var(--bg-card,#121212)] border border-[#222222] hover:border-neutral-500 transition-all flex flex-col justify-between group shadow-lg"
             >
               <div>
                 <div className="flex items-start justify-between gap-3 mb-3">

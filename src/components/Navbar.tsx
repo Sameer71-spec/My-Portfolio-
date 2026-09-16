@@ -1,17 +1,19 @@
 import { useState, useEffect, type MouseEvent } from 'react';
-import { Menu, X, ArrowUpRight } from 'lucide-react';
+import { Menu, X, ArrowUpRight, Lock, Sliders } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { PERSONAL_INFO } from '../data/portfolioData';
+import { usePortfolio } from '../context/PortfolioContext';
 
 const NAV_LINKS = [
   { name: 'Home', href: '#home' },
   { name: 'Who is Sameer?', href: '#about' },
   { name: 'Background', href: '#background' },
   { name: 'My Work', href: '#work' },
+  { name: 'Designs & Motion', href: '#designs' },
   { name: 'Contact', href: '#contact' },
 ];
 
 export function Navbar() {
+  const { personalInfo, isAuthenticated, openLoginModal, openCMS, hasUnreadSecurityAlert } = usePortfolio();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -68,8 +70,8 @@ export function Navbar() {
           onClick={(e) => handleNavClick(e, '#home')}
           className="group flex items-center gap-2"
         >
-          <span className="font-serif-display text-xl sm:text-2xl font-bold tracking-widest text-white group-hover:text-neutral-300 transition-colors">
-            SAMEER
+          <span className="font-serif-display text-xl sm:text-2xl font-bold tracking-widest text-white group-hover:text-neutral-300 transition-colors uppercase">
+            {personalInfo.name}
           </span>
           <span className="w-1.5 h-1.5 rounded-full bg-white opacity-80" />
         </a>
@@ -88,8 +90,8 @@ export function Navbar() {
           ))}
         </nav>
 
-        {/* Right CTA - Work with me */}
-        <div className="hidden sm:flex items-center gap-3">
+        {/* Right CTA - Work with me & Discreet Owner Gate */}
+        <div className="hidden sm:flex items-center gap-2.5">
           <button
             type="button"
             onClick={scrollToContact}
@@ -98,17 +100,59 @@ export function Navbar() {
             <span>Work with me</span>
             <ArrowUpRight className="w-3.5 h-3.5" />
           </button>
+
+          {/* Discreet Owner Keyhole Icon */}
+          <button
+            type="button"
+            onClick={isAuthenticated ? () => openCMS('content') : openLoginModal}
+            className={`relative p-2 rounded-full transition-all ${
+              isAuthenticated
+                ? 'text-emerald-400 bg-emerald-950/40 border border-emerald-800/40 hover:bg-emerald-900/50'
+                : 'text-[#555555] hover:text-white hover:bg-[#1A1A1A]'
+            }`}
+            title={
+              isAuthenticated
+                ? 'Open Customizer Studio (Owner Active)'
+                : 'Owner Portal Access (Shortcut: Ctrl+Shift+A)'
+            }
+            aria-label="Owner access"
+          >
+            {isAuthenticated ? <Sliders className="w-3.5 h-3.5" /> : <Lock className="w-3.5 h-3.5" />}
+            {hasUnreadSecurityAlert && (
+              <span className="absolute -top-0.5 -right-0.5 flex h-2.5 w-2.5" title="New Security Activity Detected">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500 border border-black"></span>
+              </span>
+            )}
+          </button>
         </div>
 
-        {/* Mobile Menu Button */}
-        <button
-          type="button"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="md:hidden p-2 rounded-lg text-white hover:bg-[#1A1A1A] transition-colors"
-          aria-label="Toggle navigation menu"
-        >
-          {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-        </button>
+        {/* Mobile Menu Button & Owner Icon */}
+        <div className="flex sm:hidden items-center gap-2">
+          <button
+            type="button"
+            onClick={isAuthenticated ? () => openCMS('content') : openLoginModal}
+            className="relative p-2 rounded-lg text-[#666666] hover:text-white"
+            aria-label="Owner access"
+          >
+            <Lock className="w-4 h-4" />
+            {hasUnreadSecurityAlert && (
+              <span className="absolute top-1 right-1 flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+              </span>
+            )}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="p-2 rounded-lg text-white hover:bg-[#1A1A1A] transition-colors"
+            aria-label="Toggle navigation menu"
+          >
+            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Menu Dropdown */}
@@ -131,7 +175,7 @@ export function Navbar() {
                   {link.name}
                 </a>
               ))}
-              <div className="pt-3 border-t border-[#262626]">
+              <div className="pt-3 border-t border-[#262626] flex flex-col gap-2">
                 <button
                   type="button"
                   onClick={() => {
@@ -142,6 +186,21 @@ export function Navbar() {
                 >
                   <span>Work with me today</span>
                   <ArrowUpRight className="w-3.5 h-3.5" />
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    if (isAuthenticated) {
+                      openCMS('content');
+                    } else {
+                      openLoginModal();
+                    }
+                  }}
+                  className="w-full py-2 rounded-full text-xs font-mono uppercase text-[#888888] hover:text-white bg-[#181818]"
+                >
+                  {isAuthenticated ? 'Open Customizer (Admin Active)' : 'Owner Portal Login'}
                 </button>
               </div>
             </div>
